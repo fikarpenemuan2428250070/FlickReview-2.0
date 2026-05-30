@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "824368180402",
+    "project_id": "flickreview-4451b",
+    "storage_bucket": "flickreview-4451b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:824368180402:android:cad7727420a0cbf06c2dab",
+        "android_client_info": {
+          "package_name": "com.example.flickreview"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9VxmPapwLF3fc4Lme0O-e-X2_TY8LAXU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

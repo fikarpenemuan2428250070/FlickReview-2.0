@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flickreview/l10n/app_localizations.dart';
 import 'sign_in_screen.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     _loadCurrentUser();
   }
 
-  // CEK LOGIN 
+  // CEK LOGIN
   Future<void> _loadCurrentUser() async {
     final prefs = await SharedPreferences.getInstance();
     final currentUserJson = prefs.getString("currentUser");
@@ -48,23 +49,24 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   /// 🔄 GANTI PASSWORD (REAL FIX)
   Future<void> _changePassword() async {
     final prefs = await SharedPreferences.getInstance();
+    final l10n = AppLocalizations.of(context)!;
 
     final oldPass = _oldController.text.trim();
     final newPass = _newController.text.trim();
     final confirmPass = _confirmController.text.trim();
 
     if (oldPass.isEmpty || newPass.isEmpty || confirmPass.isEmpty) {
-      _showMessage('All fields are required to be filled in');
+      _showMessage(l10n.allFieldsRequired);
       return;
     }
 
     if (oldPass != currentUser!['password']) {
-      _showMessage('The old password is wrong');
+      _showMessage(l10n.wrongPassword);
       return;
     }
 
     if (newPass != confirmPass) {
-      _showMessage('Password confirmation is not the same');
+      _showMessage(l10n.passwordMismatch);
       return;
     }
 
@@ -84,7 +86,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     await prefs.setStringList("users", users);
     await prefs.setString("currentUser", jsonEncode(currentUser));
 
-    _showMessage('Password changed successfully');
+    _showMessage(l10n.profileUpdated);
 
     Future.delayed(const Duration(seconds: 1), () {
       Navigator.pop(context);
@@ -97,19 +99,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (currentUser == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Change Password'), centerTitle: true),
+      appBar: AppBar(title: Text(l10n.changePassword), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             _passwordField(
               controller: _oldController,
-              label: 'Old Password',
+              label: l10n.oldPassword,
               obscure: _obscureOld,
               toggle: () => setState(() => _obscureOld = !_obscureOld),
             ),
@@ -117,7 +121,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
             _passwordField(
               controller: _newController,
-              label: 'New Password',
+              label: l10n.newPassword,
               obscure: _obscureNew,
               toggle: () => setState(() => _obscureNew = !_obscureNew),
             ),
@@ -125,7 +129,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
             _passwordField(
               controller: _confirmController,
-              label: 'Confirm Password',
+              label: l10n.confirmPassword,
               obscure: _obscureConfirm,
               toggle: () => setState(() => _obscureConfirm = !_obscureConfirm),
             ),
@@ -135,7 +139,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _changePassword,
-                child: const Text('Save Changes'),
+                child: Text(l10n.saveChanges),
               ),
             ),
           ],

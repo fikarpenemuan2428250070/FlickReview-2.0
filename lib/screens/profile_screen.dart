@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flickreview/widgets/profile_info_item.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flickreview/l10n/app_localizations.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -32,17 +33,17 @@ class ProfileScreen extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Konfirmasi'),
-        content: const Text('Apakah kamu yakin ingin keluar dari akun ini?'),
+        title: Text(AppLocalizations.of(context)!.confirm),
+        content: Text(AppLocalizations.of(context)!.logoutMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Batal'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Keluar'),
+            child: Text(AppLocalizations.of(context)!.logout),
           ),
         ],
       ),
@@ -80,6 +81,7 @@ class ProfileScreen extends StatelessWidget {
                         ? const Color(0xFF1F1B2E)
                         : const Color(0xFF8B5CF6),
                   ),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
@@ -96,14 +98,18 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+
                         const SizedBox(height: 20),
+
                         Divider(color: Colors.deepPurple[100]),
+
                         const SizedBox(height: 20),
+
                         TextButton(
                           onPressed: () {
                             Navigator.pushNamed(context, '/signin');
                           },
-                          child: const Text('Sign In'),
+                          child: Text(AppLocalizations.of(context)!.signIn),
                         ),
                       ],
                     ),
@@ -116,6 +122,7 @@ class ProfileScreen extends StatelessWidget {
 
         return FutureBuilder<int>(
           future: getFavoriteCount(user.uid),
+
           builder: (context, favSnapshot) {
             final favoriteMovieCount = favSnapshot.data ?? 0;
 
@@ -124,12 +131,16 @@ class ProfileScreen extends StatelessWidget {
                   .collection('users')
                   .doc(user.uid)
                   .snapshots(),
+
               builder: (context, userSnapshot) {
                 final data = userSnapshot.data?.data() as Map<String, dynamic>?;
 
                 final fullName = data?['fullname'] ?? '';
+
                 final userName = data?['username'] ?? '';
+
                 final bio = data?['bio'] ?? '';
+
                 final profileImageUrl = data?['profileImageUrl'];
 
                 return Scaffold(
@@ -146,76 +157,107 @@ class ProfileScreen extends StatelessWidget {
 
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
+
                           child: Column(
                             children: [
                               Align(
                                 alignment: Alignment.topCenter,
+
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 150),
+
                                   child: Container(
                                     decoration: BoxDecoration(
                                       border: Border.all(
                                         color: Colors.deepPurple,
+
                                         width: 2,
                                       ),
+
                                       shape: BoxShape.circle,
                                     ),
+
                                     child: buildAvatar(profileImageUrl),
                                   ),
                                 ),
                               ),
 
                               const SizedBox(height: 20),
+
                               Divider(color: Colors.deepPurple[100]),
+
                               const SizedBox(height: 4),
 
                               ProfileInfoItem(
                                 icon: Icons.lock,
-                                label: 'Username',
+
+                                label: AppLocalizations.of(context)!.username,
+
                                 value: userName,
+
                                 iconColor: Colors.amber,
                               ),
 
                               const SizedBox(height: 4),
+
                               Divider(color: Colors.deepPurple[100]),
+
                               const SizedBox(height: 4),
 
                               ProfileInfoItem(
                                 icon: Icons.person,
-                                label: 'Fullname',
+
+                                label: AppLocalizations.of(context)!.fullnameLabel,
+
                                 value: fullName,
+
                                 iconColor: Colors.blue,
                               ),
 
                               const SizedBox(height: 4),
+
                               Divider(color: Colors.deepPurple[100]),
+
                               const SizedBox(height: 4),
 
                               ProfileInfoItem(
                                 icon: Icons.info_outline,
-                                label: 'Bio',
+
+                                label: AppLocalizations.of(context)!.bio,
+
                                 value: bio.isNotEmpty ? bio : '-',
+
                                 iconColor: Colors.green,
                               ),
 
                               const SizedBox(height: 4),
+
                               Divider(color: Colors.deepPurple[100]),
+
                               const SizedBox(height: 4),
 
                               ProfileInfoItem(
                                 icon: Icons.favorite,
-                                label: 'Favorite',
-                                value: '$favoriteMovieCount Item(s)',
+
+                                label: AppLocalizations.of(context)!.favorite,
+
+                                value: '$favoriteMovieCount ${AppLocalizations.of(context)!.favoritesCount}',
+
                                 iconColor: Colors.red,
                               ),
 
                               const SizedBox(height: 4),
+
                               Divider(color: Colors.deepPurple[100]),
+
                               const SizedBox(height: 20),
 
                               TextButton(
                                 onPressed: () => confirmSignOut(context),
-                                child: const Text('Sign Out'),
+
+                                child: Text(
+                                  AppLocalizations.of(context)!.logout,
+                                ),
                               ),
                             ],
                           ),
@@ -224,17 +266,22 @@ class ProfileScreen extends StatelessWidget {
                         Positioned(
                           top: 16,
                           right: 16,
+
                           child: SafeArea(
                             child: CircleAvatar(
                               radius: 20,
+
                               backgroundColor: Colors.white,
+
                               child: IconButton(
                                 padding: EdgeInsets.zero,
+
                                 icon: const Icon(
                                   Icons.edit,
                                   color: Colors.deepPurple,
                                   size: 20,
                                 ),
+
                                 onPressed: () {
                                   Navigator.pushNamed(context, '/edit-profile');
                                 },

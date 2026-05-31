@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flickreview/services/cloudinary_service.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flickreview/l10n/app_localizations.dart';
 import 'location_picker_screen.dart';
 
 class EditReviewScreen extends StatefulWidget {
@@ -88,13 +89,14 @@ class _EditReviewScreenState extends State<EditReviewScreen> {
   }
 
   Future<void> updateReview() async {
+    final l10n = AppLocalizations.of(context)!;
     final movieId = widget.reviewData['movieId'];
     final reviewId = widget.reviewData['reviewId'];
     final reviewText = _reviewController.text.trim();
 
     if (rating == 0 || reviewText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Rating and review are required')),
+        SnackBar(content: Text(l10n.ratingAndReviewRequired)),
       );
       return;
     }
@@ -131,18 +133,20 @@ class _EditReviewScreenState extends State<EditReviewScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Review updated')));
+      ).showSnackBar(SnackBar(content: Text(l10n.reviewUpdated)));
 
       Navigator.pop(context, true);
       Navigator.pop(context, true);
     } catch (e) {
       debugPrint('UPDATE REVIEW ERROR: $e');
 
+      final l10n = AppLocalizations.of(context)!;
+
       if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Failed to update review')));
+      ).showSnackBar(SnackBar(content: Text(l10n.failedToUpdateReview)));
     }
 
     setState(() {
@@ -190,10 +194,11 @@ class _EditReviewScreenState extends State<EditReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final movieTitle = widget.reviewData['movieTitle'] ?? 'Movie';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Review')),
+      appBar: AppBar(title: Text(l10n.editReview)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -207,9 +212,9 @@ class _EditReviewScreenState extends State<EditReviewScreen> {
 
             const SizedBox(height: 24),
 
-            const Text(
-              'Edit Rating',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              l10n.editRating,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 12),
@@ -248,20 +253,20 @@ class _EditReviewScreenState extends State<EditReviewScreen> {
 
             const SizedBox(height: 24),
 
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Edit Review',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                l10n.editReview,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
 
             const SizedBox(height: 8),
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Images',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                l10n.images,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
 
@@ -381,19 +386,19 @@ class _EditReviewScreenState extends State<EditReviewScreen> {
             TextField(
               controller: _reviewController,
               maxLines: 7,
-              decoration: const InputDecoration(
-                hintText: 'Update your review...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: l10n.updateYourReview,
+                border: const OutlineInputBorder(),
               ),
             ),
 
             const SizedBox(height: 18),
 
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Location',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                l10n.location,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
 
@@ -415,7 +420,7 @@ class _EditReviewScreenState extends State<EditReviewScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        locationName.isNotEmpty ? locationName : 'Add location',
+                        locationName.isNotEmpty ? locationName : l10n.addLocation,
                         style: TextStyle(
                           color: locationName.isNotEmpty
                               ? Colors.blue
@@ -444,7 +449,7 @@ class _EditReviewScreenState extends State<EditReviewScreen> {
                         color: Colors.white,
                         strokeWidth: 2,
                       )
-                    : const Text('Save Changes'),
+                    : Text(l10n.saveChanges),
               ),
             ),
           ],

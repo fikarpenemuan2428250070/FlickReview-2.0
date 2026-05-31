@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flickreview/services/cloudinary_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flickreview/l10n/app_localizations.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -60,6 +61,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _pickProfileImage(ImageSource source) async {
     if (user == null) return;
 
+    final l10n = AppLocalizations.of(context)!;
+
     try {
       final XFile? pickedImage = await _picker.pickImage(
         source: source,
@@ -90,16 +93,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Foto profile berhasil diperbarui')),
+        SnackBar(content: Text(l10n.profileImageUpdated)),
       );
     } catch (e) {
       debugPrint("UPLOAD IMAGE ERROR: $e");
+
+      final l10n = AppLocalizations.of(context)!;
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Gagal upload foto profile: $e')));
+      ).showSnackBar(SnackBar(content: Text(l10n.profileImageUploadFailed)));
     }
 
     setState(() {
@@ -109,6 +114,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _deleteProfileImage() async {
     if (user == null) return;
+
+    final l10n = AppLocalizations.of(context)!;
 
     try {
       setState(() {
@@ -127,15 +134,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Foto profile berhasil dihapus')),
+        SnackBar(content: Text(l10n.profileImageDeleted)),
       );
     } catch (e) {
       debugPrint("DELETE PROFILE IMAGE ERROR: $e");
 
+      final l10n = AppLocalizations.of(context)!;
+
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Gagal menghapus foto profile')),
+        SnackBar(content: Text(l10n.profileImageDeleteFailed)),
       );
     }
 
@@ -145,6 +154,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _showImageOptions() {
+    final l10n = AppLocalizations.of(context)!;
+
     showModalBottomSheet(
       context: context,
       builder: (context) => SafeArea(
@@ -152,7 +163,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('Ambil dari Kamera'),
+              title: Text(l10n.takeFromCamera),
               onTap: () {
                 Navigator.pop(context);
                 _pickProfileImage(ImageSource.camera);
@@ -160,7 +171,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('Pilih dari Galeri'),
+              title: Text(l10n.chooseFromGallery),
               onTap: () {
                 Navigator.pop(context);
                 _pickProfileImage(ImageSource.gallery);
@@ -169,7 +180,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             if (profileImageUrl != null && profileImageUrl!.isNotEmpty)
               ListTile(
                 leading: const Icon(Icons.delete),
-                title: const Text('Hapus Foto Profile'),
+                title: Text(l10n.deleteProfilePhoto),
                 onTap: () {
                   Navigator.pop(context);
                   _deleteProfileImage();
@@ -198,23 +209,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _saveProfile() async {
     if (user == null) return;
 
+    final l10n = AppLocalizations.of(context)!;
+
     final newName = _nameController.text.trim();
     final newUsername = _usernameController.text.trim().toLowerCase();
     final newBio = _bioController.text.trim();
 
     if (newName.isEmpty || newUsername.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Fullname & Username wajib diisi')),
+        SnackBar(content: Text(l10n.fullnameRequired)),
       );
       return;
     }
 
     if (!RegExp(r'^[a-z0-9_\.]+$').hasMatch(newUsername)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Username hanya boleh huruf kecil, angka, underscore, dan titik',
-          ),
+        SnackBar(
+          content: Text(l10n.usernameFormat),
         ),
       );
       return;
@@ -242,7 +253,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           });
 
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Username sudah digunakan user lain')),
+            SnackBar(content: Text(l10n.usernameAlreadyInUse)),
           );
 
           return;
@@ -290,17 +301,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Profile updated')));
+      ).showSnackBar(SnackBar(content: Text(l10n.profileUpdated)));
 
       Navigator.pop(context, true);
     } catch (e) {
       debugPrint("SAVE PROFILE ERROR: $e");
 
+      final l10n = AppLocalizations.of(context)!;
+
       if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Failed to update profile: $e')));
+      ).showSnackBar(SnackBar(content: Text(l10n.failedToUpdateProfile)));
     }
 
     setState(() {
@@ -318,8 +331,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Profile')),
+      appBar: AppBar(title: Text(l10n.editProfile)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -354,21 +369,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Fullname'),
+              decoration: InputDecoration(labelText: l10n.fullnameLabel),
             ),
 
             const SizedBox(height: 12),
 
             TextField(
               controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
+              decoration: InputDecoration(labelText: l10n.username),
             ),
 
             const SizedBox(height: 12),
 
             TextField(
               controller: _bioController,
-              decoration: const InputDecoration(labelText: 'Bio'),
+              decoration: InputDecoration(labelText: l10n.bio),
               maxLines: 3,
             ),
 
@@ -387,7 +402,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text('Save Changes'),
+                    : Text(l10n.saveChanges),
               ),
             ),
           ],

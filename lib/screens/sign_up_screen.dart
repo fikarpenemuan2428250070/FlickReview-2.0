@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flickreview/l10n/app_localizations.dart';
 
 import 'sign_in_screen.dart';
 
@@ -33,6 +34,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
     final String confirmPassword = _confirmPasswordController.text.trim();
+    final l10n = AppLocalizations.of(context)!;
 
     if (fullname.isEmpty ||
         username.isEmpty ||
@@ -40,22 +42,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         password.isEmpty ||
         confirmPassword.isEmpty) {
       setState(() {
-        _errorText = 'All fields are required.';
+        _errorText = l10n.allFieldsRequired;
       });
       return;
     }
 
     if (!RegExp(r'^[a-z0-9_\.]+$').hasMatch(username)) {
       setState(() {
-        _errorText =
-            'Username hanya boleh huruf kecil, angka, underscore, dan titik.';
+        _errorText = l10n.usernameFormat;
       });
       return;
     }
 
     if (password != confirmPassword) {
       setState(() {
-        _errorText = 'Password confirmation is not the same.';
+        _errorText = l10n.passwordMismatch;
       });
       return;
     }
@@ -66,8 +67,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         !password.contains(RegExp(r'[0-9]')) ||
         !password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
       setState(() {
-        _errorText =
-            'Minimum 8 characters, combination of A-Z, a-z, numbers, and symbols.';
+        _errorText = l10n.passwordRequirements;
       });
       return;
     }
@@ -87,7 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       if (user == null) {
         setState(() {
-          _errorText = 'Registration failed.';
+          _errorText = l10n.registrationFailed;
           isLoading = false;
         });
         return;
@@ -107,7 +107,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         await user.delete();
 
         setState(() {
-          _errorText = 'Username already in use.';
+          _errorText = l10n.usernameAlreadyInUse;
           isLoading = false;
         });
 
@@ -148,16 +148,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       );
     } on FirebaseAuthException catch (e) {
-      String message = 'Registration failed.';
+      String message = l10n.registrationFailed;
 
       if (e.code == 'email-already-in-use') {
-        message = 'Email already registered.';
+        message = l10n.emailAlreadyRegistered;
       } else if (e.code == 'invalid-email') {
-        message = 'Invalid email format.';
+        message = l10n.invalidEmailFormat;
       } else if (e.code == 'weak-password') {
-        message = 'Password too weak.';
+        message = l10n.weakPassword;
       } else if (e.code == 'requires-recent-login') {
-        message = 'Please login again before deleting account.';
+        message = l10n.somethingWentWrong;
       }
 
       setState(() {
@@ -226,8 +226,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up')),
+      appBar: AppBar(title: Text(l10n.signUp)),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -238,37 +240,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 children: [
                   TextFormField(
                     controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Fullname',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.fullnameLabel,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: _usernameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Username',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.username,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.email,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 20),
                   _passwordField(
                     controller: _passwordController,
-                    label: 'Password',
+                    label: l10n.password,
                   ),
                   const SizedBox(height: 20),
                   _passwordField(
                     controller: _confirmPasswordController,
-                    label: 'Confirm Password',
+                    label: l10n.confirmPassword,
                   ),
                   if (_errorText.isNotEmpty) ...[
                     const SizedBox(height: 12),
@@ -292,7 +294,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text('Sign Up'),
+                          : Text(l10n.signUp),
                     ),
                   ),
                 ],

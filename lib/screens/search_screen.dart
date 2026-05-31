@@ -4,6 +4,7 @@ import 'package:flickreview/screens/detail_screnn.dart';
 import 'package:flickreview/services/tmdb_service.dart';
 import 'package:flickreview/utils/slide_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flickreview/l10n/app_localizations.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -59,8 +60,10 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Search Movies'), centerTitle: true),
+      appBar: AppBar(title: Text(l10n.searchMovies), centerTitle: true),
 
       body: Column(
         children: [
@@ -73,7 +76,7 @@ class _SearchScreenState extends State<SearchScreen> {
               onChanged: searchMovies,
 
               decoration: InputDecoration(
-                hintText: 'Search movie...',
+                hintText: l10n.searchMovieHint,
 
                 prefixIcon: const Icon(Icons.search),
 
@@ -102,10 +105,10 @@ class _SearchScreenState extends State<SearchScreen> {
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : movies.isEmpty
-                ? const Center(
+                ? Center(
                     child: Text(
-                      "Search your favorite movie",
-                      style: TextStyle(fontSize: 16),
+                      l10n.searchMovie,
+                      style: const TextStyle(fontSize: 16),
                     ),
                   )
                 : ListView.builder(

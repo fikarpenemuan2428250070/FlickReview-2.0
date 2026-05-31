@@ -1,0 +1,158 @@
+{
+  "@@locale": "id",
+
+  "home": "Beranda",
+  "favorite": "Favorit",
+  "profile": "Profil",
+
+  "settings": "Pengaturan",
+  "language": "Bahasa",
+  "chooseLanguage": "Pilih Bahasa",
+
+  "english": "Inggris",
+  "indonesian": "Indonesia",
+  "japanese": "Jepang",
+
+  "menu": "Menu",
+  "about": "Tentang",
+
+  "trending": "Sedang Tren",
+  "popular": "Populer",
+  "topRated": "Rating Tertinggi",
+  "upcoming": "Akan Datang",
+  "horror": "Horor",
+  "comedy": "Komedi",
+
+  "searchMovies": "Cari Film",
+
+  "editProfile": "Edit Profil",
+
+  "darkMode": "Mode Gelap",
+
+  "changePassword": "Ubah Password",
+
+  "username": "Nama Pengguna",
+  "fullnameLabel": "Nama Lengkap",
+  "bio": "Bio",
+
+  "favoriteMovies": "Film Favorit",
+  "noFavoriteMovie": "Belum ada film favorit.",
+
+  "confirm": "Konfirmasi",
+  "cancel": "Batal",
+  "logout": "Keluar",
+  "logoutMessage": "Apakah kamu yakin ingin keluar dari akun ini?",
+
+  "save": "Simpan",
+
+  "signIn": "Masuk",
+  "signUp": "Daftar",
+  "email": "Email",
+  "password": "Password",
+  "oldPassword": "Password Lama",
+  "newPassword": "Password Baru",
+  "confirmPassword": "Konfirmasi Password",
+  "welcomeBack": "Selamat Datang Kembali",
+  "register": "Daftar",
+  "dontHaveAccount": "Belum punya akun?",
+  "alreadyHaveAccount": "Sudah punya akun?",
+  "saveChanges": "Simpan Perubahan",
+
+  "writeReview": "Tulis Ulasan",
+  "addReview": "Tambah Ulasan",
+  "addImage": "Tambah Gambar",
+  "location": "Lokasi",
+  "addLocation": "Tambah Lokasi",
+  "director": "Sutradara",
+  "cast": "Pemeran",
+  "synopsis": "Sinopsis",
+  "gallery": "Galeri",
+  "reviews": "Ulasan",
+  "rating": "Rating",
+  "trailer": "Trailer",
+  "images": "Gambar",
+  "information": "Informasi",
+  "delete": "Hapus",
+  "edit": "Edit",
+  "reviewInformation": "Informasi Ulasan",
+
+  "flickReview": "FlickReview",
+  "aboutApp": "Tentang Aplikasi",
+  "appVersion": "Versi 1.0.0",
+
+  "registrationSuccess": "Pendaftaran berhasil",
+  "emailPasswordRequired": "Email dan password wajib diisi",
+  "userNotFound": "Pengguna tidak ditemukan",
+  "wrongPassword": "Password salah",
+  "invalidEmail": "Email tidak valid",
+  "invalidCredential": "Email atau password tidak valid",
+  "loginFailed": "Login gagal",
+  "somethingWentWrong": "Terjadi kesalahan",
+
+  "allFieldsRequired": "Semua kolom wajib diisi.",
+  "usernameFormat": "Username hanya boleh huruf kecil, angka, underscore, dan titik.",
+  "passwordMismatch": "Konfirmasi password tidak sama.",
+  "passwordRequirements": "Minimal 8 karakter, kombinasi A-Z, a-z, angka, dan simbol.",
+  "registrationFailed": "Pendaftaran gagal.",
+  "emailAlreadyRegistered": "Email sudah terdaftar.",
+  "invalidEmailFormat": "Format email tidak valid.",
+  "weakPassword": "Password terlalu lemah.",
+  "usernameAlreadyInUse": "Username sudah digunakan orang lain.",
+  "fullnameRequired": "Nama Lengkap & Username wajib diisi",
+
+  "profileImageUpdated": "Foto profil berhasil diperbarui",
+  "profileImageUploadFailed": "Gagal upload foto profil",
+  "profileImageDeleted": "Foto profil berhasil dihapus",
+  "profileImageDeleteFailed": "Gagal menghapus foto profil",
+  "profileUpdated": "Profil berhasil diperbarui",
+  "failedToUpdateProfile": "Gagal memperbarui profil",
+
+  "takeFromCamera": "Ambil dari Kamera",
+  "chooseFromGallery": "Pilih dari Galeri",
+  "deleteProfilePhoto": "Hapus Foto Profil",
+
+  "favoritesCount": "Item",
+
+  "trailerNotAvailable": "Trailer tidak tersedia",
+
+  "imdb": "IMDb",
+  "critics": "Kritikus",
+  "flickreviewRating": "FlickReview",
+
+  "noReviewsYet": "Belum ada review untuk film ini.",
+
+  "unknownUser": "Pengguna Tidak Dikenal",
+  "edited": "(Diedit)",
+
+  "reviewer": "Reviewer",
+  "date": "Tanggal",
+
+  "deleteReview": "Hapus Ulasan",
+  "confirmDeleteReview": "Apakah kamu yakin ingin menghapus ulasan ini?",
+
+  "ratingAndReviewRequired": "Rating dan ulasan wajib diisi",
+  "reviewSubmittedSuccessfully": "Ulasan berhasil dikirim",
+  "failedToSubmitReview": "Gagal mengirim ulasan",
+  "reviewUpdated": "Ulasan berhasil diperbarui",
+  "failedToUpdateReview": "Gagal memperbarui ulasan",
+
+  "giveYourRating": "Beri Rating Kamu",
+  "writeYourThoughts": "Tulis pendapatmu tentang film ini...",
+  "submitReview": "Kirim Ulasan",
+  "updateYourReview": "Perbarui ulasanmu...",
+  "editRating": "Edit Rating",
+  "editReview": "Edit Ulasan",
+
+  "searchMovie": "Cari film favoritmu",
+  "searchMovieHint": "Cari film...",
+
+  "locationNotFound": "Lokasi tidak ditemukan",
+  "failedToGetLocation": "Gagal mendapatkan lokasi",
+  "useCurrentLocation": "Gunakan lokasi saat ini",
+  "searchLocation": "Cari lokasi",
+
+  "addImages": "Tambah Gambar",
+  "movieImages": "Gambar Film",
+
+  "failedToLoadMovie": "Gagal memuat film"
+}

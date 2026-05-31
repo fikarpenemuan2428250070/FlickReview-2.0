@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flickreview/l10n/app_localizations.dart';
 
 import '../models/external_rating.dart';
 import '../models/movies.dart';
@@ -119,12 +120,14 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future<void> openTrailer() async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (movieDetail == null) return;
 
     if (movieDetail!.trailerId.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Trailer tidak tersedia")));
+      ).showSnackBar(SnackBar(content: Text(l10n.trailerNotAvailable)));
       return;
     }
 
@@ -154,12 +157,14 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (movieDetail == null) {
-      return const Scaffold(body: Center(child: Text("Failed to load movie")));
+      return Scaffold(body: Center(child: Text(l10n.failedToLoadMovie)));
     }
 
     final movie = movieDetail!;
@@ -198,8 +203,8 @@ class _DetailScreenState extends State<DetailScreen> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withOpacity(0.2),
-                            Colors.black.withOpacity(0.95),
+                            Colors.black.withValues(alpha: 0.2),
+                            Colors.black.withValues(alpha: 0.95),
                           ],
                         ),
                       ),
@@ -258,7 +263,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                     ElevatedButton.icon(
                                       onPressed: openTrailer,
                                       icon: const Icon(Icons.play_arrow),
-                                      label: const Text("Trailer"),
+                                      label: Text(l10n.trailer),
                                     ),
                                     const SizedBox(width: 10),
                                     IconButton(
@@ -286,9 +291,9 @@ class _DetailScreenState extends State<DetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Rating",
-                        style: TextStyle(
+                      Text(
+                        l10n.rating,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -308,21 +313,19 @@ class _DetailScreenState extends State<DetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             ratingColumn(
-                              "⭐ IMDb",
+                              "${l10n.imdb}",
                               externalRating == null
                                   ? "..."
-                                  : externalRating!.imdbRating.toStringAsFixed(
-                                      1,
-                                    ),
+                                  : externalRating!.imdbRating.toStringAsFixed(1),
                             ),
                             ratingColumn(
-                              "🍅 Critics",
+                              l10n.critics,
                               externalRating == null
                                   ? "..."
                                   : "${externalRating!.rottenTomatoes}%",
                             ),
                             ratingColumn(
-                              "🎬 FlickReview",
+                              l10n.flickreviewRating,
                               flickRating.toStringAsFixed(1),
                             ),
                           ],
@@ -346,9 +349,9 @@ class _DetailScreenState extends State<DetailScreen> {
 
                       const SizedBox(height: 30),
 
-                      const Text(
-                        "Director",
-                        style: TextStyle(
+                      Text(
+                        l10n.director,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
@@ -358,9 +361,9 @@ class _DetailScreenState extends State<DetailScreen> {
 
                       const SizedBox(height: 30),
 
-                      const Text(
-                        "Cast",
-                        style: TextStyle(
+                      Text(
+                        l10n.cast,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
@@ -376,9 +379,9 @@ class _DetailScreenState extends State<DetailScreen> {
 
                       const SizedBox(height: 30),
 
-                      const Text(
-                        "Synopsis",
-                        style: TextStyle(
+                      Text(
+                        l10n.synopsis,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
@@ -388,9 +391,9 @@ class _DetailScreenState extends State<DetailScreen> {
 
                       const SizedBox(height: 30),
 
-                      const Text(
-                        "Gallery",
-                        style: TextStyle(
+                      Text(
+                        l10n.gallery,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
@@ -437,9 +440,9 @@ class _DetailScreenState extends State<DetailScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Reviews",
-                            style: TextStyle(
+                          Text(
+                            l10n.reviews,
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
@@ -461,7 +464,7 @@ class _DetailScreenState extends State<DetailScreen> {
                               );
                             },
                             icon: const Icon(Icons.add),
-                            label: const Text("Add Review"),
+                            label: Text(l10n.addReview),
                           ),
                         ],
                       ),
@@ -469,7 +472,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       const SizedBox(height: 14),
 
                       reviewDocs.isEmpty
-                          ? const Text('Belum ada review untuk film ini.')
+                          ? Text(l10n.noReviewsYet)
                           : SizedBox(
                               height: 180,
                               child: ListView.builder(
@@ -483,7 +486,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                   data['reviewId'] = reviewDocs[index].id;
 
                                   final fullname =
-                                      data['fullname'] ?? 'Unknown User';
+                                      data['fullname'] ?? l10n.unknownUser;
 
                                   final username = data['username'] ?? 'user';
 

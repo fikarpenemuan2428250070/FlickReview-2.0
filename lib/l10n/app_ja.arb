@@ -1,0 +1,158 @@
+{
+  "@@locale": "ja",
+
+  "home": "ホーム",
+  "favorite": "お気に入り",
+  "profile": "プロフィール",
+
+  "settings": "設定",
+  "language": "言語",
+  "chooseLanguage": "言語を選択",
+
+  "english": "English",
+  "indonesian": "Indonesia",
+  "japanese": "日本語",
+
+  "menu": "メニュー",
+  "about": "概要",
+
+  "trending": "トレンド",
+  "popular": "人気作品",
+  "topRated": "高評価",
+  "upcoming": "近日公開",
+  "horror": "ホラー",
+  "comedy": "コメディ",
+
+  "searchMovies": "映画を検索",
+
+  "editProfile": "プロフィール編集",
+
+  "darkMode": "ダークモード",
+
+  "changePassword": "パスワード変更",
+
+  "username": "ユーザー名",
+  "fullnameLabel": "氏名",
+  "bio": "自己紹介",
+
+  "favoriteMovies": "お気に入り映画",
+  "noFavoriteMovie": "お気に入りの映画はまだありません。",
+
+  "confirm": "確認",
+  "cancel": "キャンセル",
+  "logout": "ログアウト",
+  "logoutMessage": "このアカウントからログアウトしますか？",
+
+  "save": "保存",
+
+  "signIn": "ログイン",
+  "signUp": "登録",
+  "email": "メール",
+  "password": "パスワード",
+  "oldPassword": "現在のパスワード",
+  "newPassword": "新しいパスワード",
+  "confirmPassword": "パスワード確認",
+  "welcomeBack": "おかえりなさい",
+  "register": "登録",
+  "dontHaveAccount": "アカウントをお持ちでないですか？",
+  "alreadyHaveAccount": "すでにアカウントをお持ちですか？",
+  "saveChanges": "変更を保存",
+
+  "writeReview": "レビューを書く",
+  "addReview": "レビュー追加",
+  "addImage": "画像追加",
+  "location": "場所",
+  "addLocation": "場所を追加",
+  "director": "監督",
+  "cast": "出演者",
+  "synopsis": "あらすじ",
+  "gallery": "ギャラリー",
+  "reviews": "レビュー",
+  "rating": "評価",
+  "trailer": "予告編",
+  "images": "画像",
+  "information": "情報",
+  "delete": "削除",
+  "edit": "編集",
+  "reviewInformation": "レビュー情報",
+
+  "flickReview": "FlickReview",
+  "aboutApp": "アプリについて",
+  "appVersion": "バージョン 1.0.0",
+
+  "registrationSuccess": "登録に成功しました",
+  "emailPasswordRequired": "メールとパスワードは必須です",
+  "userNotFound": "ユーザーが見つかりません",
+  "wrongPassword": "パスワードが間違っています",
+  "invalidEmail": "無効なメールです",
+  "invalidCredential": "メールまたはパスワードが無効です",
+  "loginFailed": "ログインに失敗しました",
+  "somethingWentWrong": "エラーが発生しました",
+
+  "allFieldsRequired": "すべての項目は必須です。",
+  "usernameFormat": "ユーザー名は小文字、数字、アンダーバー、ピリオドのみ使用できます。",
+  "passwordMismatch": "パスワードの確認が一致しません。",
+  "passwordRequirements": "最小8文字、A-Z、a-z、数字、記号の組み合わせが必要です。",
+  "registrationFailed": "登録に失敗しました。",
+  "emailAlreadyRegistered": "このメールは既に登録されています。",
+  "invalidEmailFormat": "無効なメール形式です。",
+  "weakPassword": "パスワードが強すぎます。",
+  "usernameAlreadyInUse": "ユーザー名は既に使用されています。",
+  "fullnameRequired": "氏名とユーザー名は必須です",
+
+  "profileImageUpdated": "プロフィール画像が更新されました",
+  "profileImageUploadFailed": "プロフィール画像のアップロードに失敗しました",
+  "profileImageDeleted": "プロフィール画像が削除されました",
+  "profileImageDeleteFailed": "プロフィール画像の削除に失敗しました",
+  "profileUpdated": "プロフィールが更新されました",
+  "failedToUpdateProfile": "プロフィールの更新に失敗しました",
+
+  "takeFromCamera": "カメラから撮影",
+  "chooseFromGallery": "ギャラリーから選択",
+  "deleteProfilePhoto": "プロフィール写真を削除",
+
+  "favoritesCount": "件",
+
+  "trailerNotAvailable": "予告編は利用できません",
+
+  "imdb": "IMDb",
+  "critics": "批評家",
+  "flickreviewRating": "FlickReview",
+
+  "noReviewsYet": "この映画のレビューはまだありません。",
+
+  "unknownUser": "不明なユーザー",
+  "edited": "(編集済み)",
+
+  "reviewer": "レビューアー",
+  "date": "日付",
+
+  "deleteReview": "レビューを削除",
+  "confirmDeleteReview": "このレビューを削除してもよろしいですか？",
+
+  "ratingAndReviewRequired": "評価とレビューは必須です",
+  "reviewSubmittedSuccessfully": "レビューが送信されました",
+  "failedToSubmitReview": "レビューの送信に失敗しました",
+  "reviewUpdated": "レビューが更新されました",
+  "failedToUpdateReview": "レビューの更新に失敗しました",
+
+  "giveYourRating": "評価をつける",
+  "writeYourThoughts": "この映画についての感想を書いてください...",
+  "submitReview": "レビューを送信",
+  "updateYourReview": "レビューを更新...",
+  "editRating": "評価を編集",
+  "editReview": "レビューを編集",
+
+  "searchMovie": "好きな映画を検索",
+  "searchMovieHint": "映画を検索...",
+
+  "locationNotFound": "場所が見つかりません",
+  "failedToGetLocation": "場所の取得に失敗しました",
+  "useCurrentLocation": "現在地を使用",
+  "searchLocation": "場所を検索",
+
+  "addImages": "画像を追加",
+  "movieImages": "映画画像",
+
+  "failedToLoadMovie": "映画の読み込みに失敗しました"
+}

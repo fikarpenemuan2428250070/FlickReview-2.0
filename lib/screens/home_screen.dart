@@ -6,6 +6,7 @@ import 'package:flickreview/screens/setting_screen.dart';
 import 'package:flickreview/services/tmdb_service.dart';
 import 'package:flickreview/utils/scale_fade_route.dart';
 import 'package:flickreview/widgets/movie_section.dart';
+import 'package:flickreview/l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,23 +34,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> loadMovies() async {
     try {
-      final trending =
-          await TmdbService.fetchTrendingMovies();
+      final trending = await TmdbService.fetchTrendingMovies();
 
-      final popular =
-          await TmdbService.fetchPopularMovies();
+      final popular = await TmdbService.fetchPopularMovies();
 
-      final topRated =
-          await TmdbService.fetchTopRatedMovies();
+      final topRated = await TmdbService.fetchTopRatedMovies();
 
-      final upcoming =
-          await TmdbService.fetchUpcomingMovies();
+      final upcoming = await TmdbService.fetchUpcomingMovies();
 
-      final horror =
-          await TmdbService.fetchMoviesByGenre(27);
+      final horror = await TmdbService.fetchMoviesByGenre(27);
 
-      final comedy =
-          await TmdbService.fetchMoviesByGenre(35);
+      final comedy = await TmdbService.fetchMoviesByGenre(35);
 
       setState(() {
         trendingMovies = trending;
@@ -78,37 +73,34 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration:
-                  BoxDecoration(color: Colors.deepPurple),
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Colors.deepPurple),
               child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
+                AppLocalizations.of(context)!.menu,
+                style: const TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
 
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Setting'),
+
+              title: Text(AppLocalizations.of(context)!.settings),
+
               onTap: () {
                 Navigator.pop(context);
 
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        const SettingScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const SettingScreen()),
                 );
               },
             ),
 
             ListTile(
               leading: const Icon(Icons.info_outline),
-              title: const Text('About'),
+
+              title: Text(AppLocalizations.of(context)!.about),
+
               onTap: () {
                 Navigator.pop(context);
 
@@ -116,8 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   context: context,
                   applicationName: "FlickReview",
                   applicationVersion: "1.0.0",
-                  applicationLegalese:
-                      "© 2025 FlickReview App",
+                  applicationLegalese: "© 2025 FlickReview App",
                 );
               },
             ),
@@ -138,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
 
-        title: const Text('FlickReview'),
+        title: Text(AppLocalizations.of(context)!.flickReview),
 
         centerTitle: true,
 
@@ -146,12 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              Navigator.push(
-                context,
-                ScaleFadeRoute(
-                  page: SearchScreen(),
-                ),
-              );
+              Navigator.push(context, ScaleFadeRoute(page: SearchScreen()));
             },
           ),
         ],
@@ -159,41 +145,38 @@ class _HomeScreenState extends State<HomeScreen> {
 
       // ================= BODY =================
       body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   MovieSection(
-                    title: '🔥 Trending',
+                    title: '🔥 ${AppLocalizations.of(context)!.trending}',
                     movies: trendingMovies,
                   ),
 
                   MovieSection(
-                    title: '⭐ Popular',
+                    title: '⭐ ${AppLocalizations.of(context)!.popular}',
                     movies: popularMovies,
                   ),
 
                   MovieSection(
-                    title: '🏆 Top Rated',
+                    title: '🏆 ${AppLocalizations.of(context)!.topRated}',
                     movies: topRatedMovies,
                   ),
 
                   MovieSection(
-                    title: '🎬 Upcoming',
+                    title: '🎬 ${AppLocalizations.of(context)!.upcoming}',
                     movies: upcomingMovies,
                   ),
 
                   MovieSection(
-                    title: '👻 Horror',
+                    title: '👻 ${AppLocalizations.of(context)!.horror}',
                     movies: horrorMovies,
                   ),
 
                   MovieSection(
-                    title: '😂 Comedy',
+                    title: '😂 ${AppLocalizations.of(context)!.comedy}',
                     movies: comedyMovies,
                   ),
 

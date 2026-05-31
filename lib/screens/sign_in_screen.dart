@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flickreview/l10n/app_localizations.dart';
 import '../main.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -15,7 +15,6 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _emailController = TextEditingController();
-
   final TextEditingController _passwordController = TextEditingController();
 
   bool obscurePassword = true;
@@ -31,7 +30,7 @@ class _SignInScreenState extends State<SignInScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.fromRegister) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Registration successful")),
+          SnackBar(content: Text(AppLocalizations.of(context)!.registrationSuccess)),
         );
       }
     });
@@ -40,12 +39,11 @@ class _SignInScreenState extends State<SignInScreen> {
   // ================= SIGN IN =================
   Future<void> signIn() async {
     final email = _emailController.text.trim();
-
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
       setState(() {
-        errorText = 'Email and password are required';
+        errorText = AppLocalizations.of(context)!.emailPasswordRequired;
       });
 
       return;
@@ -73,21 +71,21 @@ class _SignInScreenState extends State<SignInScreen> {
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        errorText = 'User not found';
+        errorText = AppLocalizations.of(context)!.userNotFound;
       } else if (e.code == 'wrong-password') {
-        errorText = 'Wrong password';
+        errorText = AppLocalizations.of(context)!.wrongPassword;
       } else if (e.code == 'invalid-email') {
-        errorText = 'Invalid email';
+        errorText = AppLocalizations.of(context)!.invalidEmail;
       } else if (e.code == 'invalid-credential') {
-        errorText = 'Invalid email or password';
+        errorText = AppLocalizations.of(context)!.invalidCredential;
       } else {
-        errorText = 'Login failed';
+        errorText = AppLocalizations.of(context)!.loginFailed;
       }
 
       setState(() {});
     } catch (e) {
       setState(() {
-        errorText = 'Something went wrong';
+        errorText = AppLocalizations.of(context)!.somethingWentWrong;
       });
     }
 
@@ -108,9 +106,10 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign In')),
+      appBar: AppBar(title: Text(l10n.signIn)),
 
       body: Center(
         child: SingleChildScrollView(
@@ -127,9 +126,9 @@ class _SignInScreenState extends State<SignInScreen> {
 
               const SizedBox(height: 20),
 
-              const Text(
-                "Welcome Back",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              Text(
+                l10n.welcomeBack,
+                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 30),
@@ -140,10 +139,10 @@ class _SignInScreenState extends State<SignInScreen> {
 
                 keyboardType: TextInputType.emailAddress,
 
-                decoration: const InputDecoration(
-                  labelText: "Email",
+                decoration: InputDecoration(
+                  labelText: l10n.email,
 
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
               ),
 
@@ -156,7 +155,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 obscureText: obscurePassword,
 
                 decoration: InputDecoration(
-                  labelText: "Password",
+                  labelText: l10n.password,
 
                   border: const OutlineInputBorder(),
 
@@ -199,7 +198,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     foregroundColor: Colors.white,
 
-                    disabledBackgroundColor: Colors.deepPurple.withOpacity(0.6),
+                    disabledBackgroundColor: Colors.deepPurple.withValues(alpha: 0.6),
 
                     disabledForegroundColor: Colors.white,
 
@@ -226,9 +225,9 @@ class _SignInScreenState extends State<SignInScreen> {
                             strokeWidth: 2,
                           ),
                         )
-                      : const Text(
-                          'Sign In',
-                          style: TextStyle(
+                      : Text(
+                          l10n.signIn,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -249,10 +248,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
 
                   children: [
-                    const TextSpan(text: "Don't have an account? "),
+                    TextSpan(text: "${l10n.dontHaveAccount} "),
 
                     TextSpan(
-                      text: 'Register',
+                      text: l10n.register,
 
                       style: const TextStyle(
                         color: Colors.blue,

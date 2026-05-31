@@ -14,7 +14,12 @@ import 'package:flickreview/screens/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'theme/theme_controller.dart';
+import 'helper/locale_provider.dart';
+
+import 'l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,8 +28,13 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeController(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeController()),
+
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
+      ],
+
       child: const MyApp(),
     ),
   );
@@ -36,6 +46,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: context.watch<LocaleProvider>().locale,
+
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+
+        GlobalMaterialLocalizations.delegate,
+
+        GlobalWidgetsLocalizations.delegate,
+
+        GlobalCupertinoLocalizations.delegate,
+      ],
+
+      supportedLocales: const [Locale('en'), Locale('id'), Locale('ja')],
+
       debugShowCheckedModeBanner: false,
 
       title: 'FlickReview',
@@ -91,8 +115,6 @@ class MyApp extends StatelessWidget {
 
         colorScheme: const ColorScheme.dark(
           primary: Color(0xFF8B5CF6),
-
-          background: Color(0xFF1F1B2E),
 
           surface: Color(0xFF8B5CF6),
 
@@ -174,7 +196,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = const [
     HomeScreen(),
+
     FavoriteScreen(),
+
     ProfileScreen(),
   ];
 
@@ -202,17 +226,23 @@ class _MainScreenState extends State<MainScreen> {
               });
             },
 
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-
+            items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.favorite),
-                label: 'Favorite',
+                icon: const Icon(Icons.home),
+
+                label: AppLocalizations.of(context)!.home,
               ),
 
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Profile',
+                icon: const Icon(Icons.favorite),
+
+                label: AppLocalizations.of(context)!.favorite,
+              ),
+
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.person),
+
+                label: AppLocalizations.of(context)!.profile,
               ),
             ],
 

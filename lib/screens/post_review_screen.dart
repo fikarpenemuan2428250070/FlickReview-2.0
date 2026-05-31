@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flickreview/services/cloudinary_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flickreview/l10n/app_localizations.dart';
 
 import 'location_picker_screen.dart';
 
@@ -118,6 +119,7 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
 
   Future<void> submitReview() async {
     final user = FirebaseAuth.instance.currentUser;
+    final l10n = AppLocalizations.of(context)!;
 
     if (user == null) {
       Navigator.pushNamed(context, '/signin');
@@ -128,7 +130,7 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
 
     if (rating == 0 || reviewText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Rating and review are required')),
+        SnackBar(content: Text(l10n.ratingAndReviewRequired)),
       );
       return;
     }
@@ -184,18 +186,20 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Review submitted successfully')),
+        SnackBar(content: Text(l10n.reviewSubmittedSuccessfully)),
       );
 
       Navigator.pop(context, true);
     } catch (e) {
       debugPrint('SUBMIT REVIEW ERROR: $e');
 
+      final l10n = AppLocalizations.of(context)!;
+
       if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Failed to submit review: $e')));
+      ).showSnackBar(SnackBar(content: Text(l10n.failedToSubmitReview)));
     }
 
     setState(() {
@@ -272,10 +276,11 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final hasLocation = locationName.isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Post Review')),
+      appBar: AppBar(title: Text(l10n.writeReview)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -316,7 +321,7 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
                       Text("${widget.movieYear} • ${widget.movieGenre}"),
                       const SizedBox(height: 6),
                       Text(
-                        "Director: ${widget.movieDirector}",
+                        "${l10n.director}: ${widget.movieDirector}",
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ],
@@ -328,10 +333,10 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
             const SizedBox(height: 28),
 
             // RATING
-            const Center(
+            Center(
               child: Text(
-                'Give Your Rating',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                l10n.giveYourRating,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
 
@@ -377,9 +382,9 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
             const SizedBox(height: 22),
 
             // IMAGE UPLOAD
-            const Text(
-              'Add Image',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              l10n.addImages,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 8),
@@ -389,9 +394,9 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
             const SizedBox(height: 24),
 
             // REVIEW TEXT
-            const Text(
-              'Write Review',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              l10n.writeReview,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 8),
@@ -399,18 +404,18 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
             TextField(
               controller: _reviewController,
               maxLines: 7,
-              decoration: const InputDecoration(
-                hintText: 'Write your thoughts about this movie...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: l10n.writeYourThoughts,
+                border: const OutlineInputBorder(),
               ),
             ),
 
             const SizedBox(height: 18),
 
             // LOCATION
-            const Text(
-              'Location',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              l10n.location,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 8),
@@ -431,7 +436,7 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        hasLocation ? locationName : 'Add location',
+                        hasLocation ? locationName : l10n.addLocation,
                         style: TextStyle(
                           color: hasLocation ? Colors.blue : Colors.grey[700],
                           fontWeight: hasLocation
@@ -459,7 +464,7 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
                         color: Colors.white,
                         strokeWidth: 2,
                       )
-                    : const Text('Submit Review'),
+                    : Text(l10n.submitReview),
               ),
             ),
 

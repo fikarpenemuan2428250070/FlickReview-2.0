@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flickreview/l10n/app_localizations.dart';
 import 'gallery_preview_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,7 +36,9 @@ class ReviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fullname = reviewData['fullname'] ?? 'Unknown User';
+    final l10n = AppLocalizations.of(context)!;
+
+    final fullname = reviewData['fullname'] ?? l10n.unknownUser;
     final username = reviewData['username'] ?? 'user';
     final profileImageUrl = reviewData['profileImageUrl'] ?? '';
     final rating = (reviewData['rating'] ?? 0).toDouble();
@@ -50,11 +53,11 @@ class ReviewScreen extends StatelessWidget {
 
     final createdAt = reviewData['createdAt'];
     final isEdited = reviewData['isEdited'] ?? false;
-    final reviewDateText = formatReviewDate(createdAt, isEdited);
+    final reviewDateText = formatReviewDate(createdAt, isEdited, l10n);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FlickReview'),
+        title: Text(l10n.flickReview),
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
@@ -74,10 +77,10 @@ class ReviewScreen extends StatelessWidget {
             },
             itemBuilder: (context) => [
               if (isOwner)
-                const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                PopupMenuItem(value: 'edit', child: Text(l10n.edit)),
               if (isOwner)
-                const PopupMenuItem(value: 'delete', child: Text('Delete')),
-              const PopupMenuItem(value: 'info', child: Text('Information')),
+                PopupMenuItem(value: 'delete', child: Text(l10n.delete)),
+              PopupMenuItem(value: 'info', child: Text(l10n.information)),
             ],
           ),
         ],
@@ -153,7 +156,7 @@ class ReviewScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text('/5', style: TextStyle(fontSize: 20)),
+                Text('/5', style: const TextStyle(fontSize: 20)),
               ],
             ),
 
@@ -161,9 +164,9 @@ class ReviewScreen extends StatelessWidget {
 
             //IMAGES
             if (reviewImageUrls.isNotEmpty) ...[
-              const Text(
-                'Images',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                l10n.images,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
 
@@ -213,9 +216,9 @@ class ReviewScreen extends StatelessWidget {
             ],
 
             // REVIEW TEXT
-            const Text(
-              'Review',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              l10n.reviews,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 8),
@@ -229,7 +232,7 @@ class ReviewScreen extends StatelessWidget {
     );
   }
 
-  String formatReviewDate(dynamic timestamp, bool isEdited) {
+  String formatReviewDate(dynamic timestamp, bool isEdited, AppLocalizations l10n) {
     if (timestamp == null) return '';
 
     DateTime date;
@@ -257,11 +260,12 @@ class ReviewScreen extends StatelessWidget {
 
     final formatted = '${date.day} ${months[date.month - 1]} ${date.year}';
 
-    return isEdited ? '$formatted (Edited)' : formatted;
+    return isEdited ? '$formatted ${l10n.edited}' : formatted;
   }
 
   void showReviewInfo(BuildContext context, String reviewDateText) {
-    final fullname = reviewData['fullname'] ?? 'Unknown User';
+    final l10n = AppLocalizations.of(context)!;
+    final fullname = reviewData['fullname'] ?? l10n.unknownUser;
     final username = reviewData['username'] ?? 'user';
     final locationName = reviewData['locationName'] ?? '';
 
@@ -275,14 +279,14 @@ class ReviewScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Review Information',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.reviewInformation,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
 
                 const SizedBox(height: 16),
 
-                Text('Reviewer: $fullname'),
+                Text('${l10n.reviewer}: $fullname'),
                 const SizedBox(height: 8),
 
                 Text('Username: @$username'),
@@ -293,7 +297,7 @@ class ReviewScreen extends StatelessWidget {
                     onTap: openMaps,
                     child: Row(
                       children: [
-                        const Text('Location: '),
+                        Text('${l10n.location}: '),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
@@ -310,7 +314,7 @@ class ReviewScreen extends StatelessWidget {
 
                 const SizedBox(height: 8),
 
-                if (reviewDateText.isNotEmpty) Text('Date: $reviewDateText'),
+                if (reviewDateText.isNotEmpty) Text('${l10n.date}: $reviewDateText'),
               ],
             ),
           ),
@@ -320,22 +324,23 @@ class ReviewScreen extends StatelessWidget {
   }
 
   Future<void> deleteReview(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final movieId = reviewData['movieId'];
     final reviewId = reviewData['reviewId'];
 
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Review'),
-        content: const Text('Are you sure you want to delete this review?'),
+        title: Text(l10n.deleteReview),
+        content: Text(l10n.confirmDeleteReview),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),

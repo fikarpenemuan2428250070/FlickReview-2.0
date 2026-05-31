@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flickreview/l10n/app_localizations.dart';
 
 class LocationPickerScreen extends StatefulWidget {
   const LocationPickerScreen({super.key});
@@ -15,6 +16,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
   bool isLoading = false;
 
   Future<void> searchLocation() async {
+    final l10n = AppLocalizations.of(context)!;
     final query = _searchController.text.trim();
     if (query.isEmpty) return;
 
@@ -33,13 +35,14 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Location not found')));
+      ).showSnackBar(SnackBar(content: Text(l10n.locationNotFound)));
     }
 
     setState(() => isLoading = false);
   }
 
   Future<void> useCurrentLocation() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => isLoading = true);
 
     try {
@@ -65,7 +68,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Failed to get location')));
+      ).showSnackBar(SnackBar(content: Text(l10n.failedToGetLocation)));
     }
 
     setState(() => isLoading = false);
@@ -79,8 +82,10 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Location')),
+      appBar: AppBar(title: Text(l10n.addLocation)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -88,7 +93,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search location',
+                hintText: l10n.searchLocation,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.send),
@@ -104,7 +109,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
               child: OutlinedButton.icon(
                 onPressed: isLoading ? null : useCurrentLocation,
                 icon: const Icon(Icons.my_location),
-                label: const Text('Use current location'),
+                label: Text(l10n.useCurrentLocation),
               ),
             ),
             if (isLoading)

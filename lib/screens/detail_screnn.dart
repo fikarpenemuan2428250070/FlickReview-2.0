@@ -313,19 +313,23 @@ class _DetailScreenState extends State<DetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             ratingColumn(
-                              "${l10n.imdb}",
+                              "⭐ ${l10n.imdb}",
                               externalRating == null
                                   ? "..."
-                                  : externalRating!.imdbRating.toStringAsFixed(1),
+                                  : externalRating!.imdbRating.toStringAsFixed(
+                                      1,
+                                    ),
                             ),
+
                             ratingColumn(
-                              l10n.critics,
+                              "🍅 ${l10n.critics}",
                               externalRating == null
                                   ? "..."
                                   : "${externalRating!.rottenTomatoes}%",
                             ),
+
                             ratingColumn(
-                              l10n.flickreviewRating,
+                              "🎬 ${l10n.flickreviewRating}",
                               flickRating.toStringAsFixed(1),
                             ),
                           ],

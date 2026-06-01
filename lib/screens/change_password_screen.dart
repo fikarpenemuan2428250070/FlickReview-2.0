@@ -1,8 +1,6 @@
-import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flickreview/l10n/app_localizations.dart';
-import 'sign_in_screen.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -19,49 +17,43 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   bool _obscureOld = true;
   bool _obscureNew = true;
   bool _obscureConfirm = true;
+  bool _isLoading = false;
 
-  Map<String, dynamic>? currentUser;
+  User? get currentUser => FirebaseAuth.instance.currentUser;
 
   @override
-  void initState() {
-    super.initState();
-    _loadCurrentUser();
+  void dispose() {
+    _oldController.dispose();
+    _newController.dispose();
+    _confirmController.dispose();
+    super.dispose();
   }
 
-  // CEK LOGIN
-  Future<void> _loadCurrentUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    final currentUserJson = prefs.getString("currentUser");
-
-    if (currentUserJson == null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const SignInScreen()),
-      );
-      return;
-    }
-
-    setState(() {
-      currentUser = jsonDecode(currentUserJson);
-    });
-  }
-
-  /// 🔄 GANTI PASSWORD (REAL FIX)
   Future<void> _changePassword() async {
-    final prefs = await SharedPreferences.getInstance();
     final l10n = AppLocalizations.of(context)!;
 
+    final user = currentUser;
     final oldPass = _oldController.text.trim();
     final newPass = _newController.text.trim();
     final confirmPass = _confirmController.text.trim();
+
+    if (user == null) {
+      _showMessage('Please sign in again');
+      return;
+    }
+
+    if (user.email == null) {
+      _showMessage('Email account not found');
+      return;
+    }
 
     if (oldPass.isEmpty || newPass.isEmpty || confirmPass.isEmpty) {
       _showMessage(l10n.allFieldsRequired);
       return;
     }
 
-    if (oldPass != currentUser!['password']) {
-      _showMessage(l10n.wrongPassword);
+    if (newPass.length < 6) {
+      _showMessage('New password must be at least 6 characters');
       return;
     }
 
@@ -70,27 +62,51 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       return;
     }
 
-    // 🔁 UPDATE USERS LIST
-    List<String> users = prefs.getStringList("users") ?? [];
+    setState(() {
+      _isLoading = true;
+    });
 
-    for (int i = 0; i < users.length; i++) {
-      final user = jsonDecode(users[i]);
-      if (user['username'] == currentUser!['username']) {
-        user['password'] = newPass;
-        users[i] = jsonEncode(user);
-        currentUser = user;
-        break;
+    try {
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: oldPass,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+
+      await user.updatePassword(newPass);
+
+      if (!mounted) return;
+
+      _showMessage('Password changed successfully');
+
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+
+      String message = 'Failed to change password';
+
+      if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        message = l10n.wrongPassword;
+      } else if (e.code == 'weak-password') {
+        message = 'Password is too weak';
+      } else if (e.code == 'requires-recent-login') {
+        message = 'Please sign in again before changing password';
+      } else if (e.code == 'network-request-failed') {
+        message = 'No internet connection';
+      }
+
+      _showMessage(message);
+    } catch (e) {
+      if (!mounted) return;
+      _showMessage('Something went wrong');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
-
-    await prefs.setStringList("users", users);
-    await prefs.setString("currentUser", jsonEncode(currentUser));
-
-    _showMessage(l10n.profileUpdated);
-
-    Future.delayed(const Duration(seconds: 1), () {
-      Navigator.pop(context);
-    });
   }
 
   void _showMessage(String msg) {
@@ -102,12 +118,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     if (currentUser == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.changePassword), centerTitle: true),
+        body: const Center(child: Text('Please sign in first')),
+      );
     }
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.changePassword), centerTitle: true),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
@@ -117,6 +136,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               obscure: _obscureOld,
               toggle: () => setState(() => _obscureOld = !_obscureOld),
             ),
+
             const SizedBox(height: 16),
 
             _passwordField(
@@ -125,6 +145,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               obscure: _obscureNew,
               toggle: () => setState(() => _obscureNew = !_obscureNew),
             ),
+
             const SizedBox(height: 16),
 
             _passwordField(
@@ -133,13 +154,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               obscure: _obscureConfirm,
               toggle: () => setState(() => _obscureConfirm = !_obscureConfirm),
             ),
+
             const SizedBox(height: 24),
 
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _changePassword,
-                child: Text(l10n.saveChanges),
+                onPressed: _isLoading ? null : _changePassword,
+                child: _isLoading
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(l10n.saveChanges),
               ),
             ),
           ],
@@ -164,6 +195,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
           onPressed: toggle,
         ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }

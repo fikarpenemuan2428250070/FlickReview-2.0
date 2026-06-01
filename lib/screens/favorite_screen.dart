@@ -65,9 +65,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       drawer: Drawer(
@@ -76,22 +74,17 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           children: [
             DrawerHeader(
               decoration: const BoxDecoration(color: Colors.deepPurple),
-
               child: Text(
-                AppLocalizations.of(context)!.menu,
-
+                l10n.menu,
                 style: const TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
 
             ListTile(
               leading: const Icon(Icons.settings),
-
-              title: Text(AppLocalizations.of(context)!.settings),
-
+              title: Text(l10n.settings),
               onTap: () {
                 Navigator.pop(context);
-
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const SettingScreen()),
@@ -101,12 +94,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
             ListTile(
               leading: const Icon(Icons.info_outline),
-
-              title: Text(AppLocalizations.of(context)!.about),
-
+              title: Text(l10n.about),
               onTap: () {
                 Navigator.pop(context);
-
                 showAboutDialog(
                   context: context,
                   applicationName: "FlickReview",
@@ -124,22 +114,17 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           builder: (context) {
             return IconButton(
               icon: const Icon(Icons.menu),
-
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
             );
           },
         ),
-
-        title: Text(AppLocalizations.of(context)!.favoriteMovies),
-
+        title: Text(l10n.favoriteMovies),
         centerTitle: true,
-
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-
             onPressed: () {
               Navigator.push(
                 context,
@@ -150,17 +135,17 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         ],
       ),
 
-      body: favoriteMovies.isEmpty
+      body: loading
+          ? const Center(child: CircularProgressIndicator())
+          : favoriteMovies.isEmpty
           ? Center(
               child: Text(
-                AppLocalizations.of(context)!.noFavoriteMovie,
-
+                l10n.noFavoriteMovie,
                 style: const TextStyle(fontSize: 16),
               ),
             )
           : ListView.builder(
               itemCount: favoriteMovies.length,
-
               itemBuilder: (context, index) {
                 final movie = favoriteMovies[index];
 
@@ -173,34 +158,24 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                       loadFavorites();
                     });
                   },
-
                   child: Container(
                     margin: const EdgeInsets.symmetric(
                       horizontal: 15,
                       vertical: 10,
                     ),
-
                     child: Row(
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-
                           child: Image.network(
                             movie.posterUrl,
-
                             width: 90,
-
                             height: 135,
-
                             fit: BoxFit.cover,
-
                             errorBuilder: (_, __, ___) => Container(
                               width: 90,
-
                               height: 135,
-
                               color: Colors.grey[300],
-
                               child: const Icon(Icons.movie),
                             ),
                           ),
@@ -211,14 +186,11 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-
                             children: [
                               Text(
                                 movie.title,
-
                                 style: const TextStyle(
                                   fontSize: 18,
-
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -227,7 +199,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
                               Text(
                                 "${movie.type} • ${movie.year}",
-
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
 
@@ -235,11 +206,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
                               Text(
                                 movie.genre,
-
                                 maxLines: 2,
-
                                 overflow: TextOverflow.ellipsis,
-
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ],

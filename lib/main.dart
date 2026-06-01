@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flickreview/firebase_options.dart';
 
@@ -10,6 +12,9 @@ import 'package:flickreview/screens/setting_screen.dart';
 import 'package:flickreview/screens/sign_in_screen.dart';
 import 'package:flickreview/screens/sign_up_screen.dart';
 import 'package:flickreview/screens/auth_gate.dart';
+
+import 'dart:convert';
+import 'package:flickreview/screens/review_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +37,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 }
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -45,6 +52,16 @@ Future<void> main() async {
   );
   await FirebaseMessaging.instance.subscribeToTopic('flickreview_reviews');
   final token = await FirebaseMessaging.instance.getToken();
+  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'fcmToken': newToken,
+      'fcmTokenUpdatedAt': Timestamp.now(),
+    });
+  });
 
   debugPrint("FCM TOKEN:");
   debugPrint(token);
@@ -55,7 +72,18 @@ Future<void> main() async {
     android: initializationSettingsAndroid,
   );
 
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: (response) {
+      final payload = response.payload;
+
+      if (payload == null || payload.isEmpty) return;
+
+      final data = jsonDecode(payload) as Map<String, dynamic>;
+
+      openReviewFromNotification(data);
+    },
+  );
   FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
     final title = message.data['title'] ?? 'FlickReview';
     final body = message.data['body'] ?? '';
@@ -76,8 +104,18 @@ Future<void> main() async {
           largeIcon: avatarBitmap,
         ),
       ),
+      payload: jsonEncode({
+        'movieId': message.data['movieId'] ?? '',
+        'reviewId': message.data['reviewId'] ?? '',
+      }),
     );
   });
+
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    openReviewFromNotification(message.data);
+  });
+
+  final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
   runApp(
     MultiProvider(
@@ -89,6 +127,36 @@ Future<void> main() async {
 
       child: const MyApp(),
     ),
+  );
+
+  if (initialMessage != null) {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      openReviewFromNotification(initialMessage.data);
+    });
+  }
+}
+
+Future<void> openReviewFromNotification(Map<String, dynamic> data) async {
+  final movieId = data['movieId'];
+  final reviewId = data['reviewId'];
+
+  if (movieId == null || reviewId == null) return;
+  if (movieId.toString().isEmpty || reviewId.toString().isEmpty) return;
+
+  final reviewDoc = await FirebaseFirestore.instance
+      .collection('movie_reviews')
+      .doc(movieId)
+      .collection('reviews')
+      .doc(reviewId)
+      .get();
+
+  if (!reviewDoc.exists) return;
+
+  final reviewData = reviewDoc.data() as Map<String, dynamic>;
+  reviewData['reviewId'] = reviewDoc.id;
+
+  navigatorKey.currentState?.push(
+    MaterialPageRoute(builder: (_) => ReviewScreen(reviewData: reviewData)),
   );
 }
 
@@ -114,6 +182,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       locale: context.watch<LocaleProvider>().locale,
 
       localizationsDelegates: const [

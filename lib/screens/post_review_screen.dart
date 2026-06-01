@@ -184,15 +184,29 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
             'isEdited': false,
           });
 
-      await NotificationService.sendReviewNotification(
-        fullname: fullname,
-        username: username,
-        movieTitle: widget.movieTitle,
-        movieYear: widget.movieYear,
-        profileImageUrl: profileImageUrl,
-        movieId: widget.movieId,
-        reviewId: user.uid,
-      );
+      final usersSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .get();
+
+      for (final doc in usersSnapshot.docs) {
+        if (doc.id == user.uid) continue;
+
+        final data = doc.data();
+        final token = data['fcmToken'];
+
+        if (token == null || token.toString().isEmpty) continue;
+
+        await NotificationService.sendToDevice(
+          token: token,
+          fullname: fullname,
+          username: username,
+          movieTitle: widget.movieTitle,
+          movieYear: widget.movieYear,
+          profileImageUrl: profileImageUrl,
+          movieId: widget.movieId,
+          reviewId: user.uid,
+        );
+      }
 
       if (!mounted) return;
 

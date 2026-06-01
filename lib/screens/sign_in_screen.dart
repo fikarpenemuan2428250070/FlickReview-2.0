@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flickreview/l10n/app_localizations.dart';
+import '../services/fcm_token_service.dart';
 import '../main.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -30,7 +31,9 @@ class _SignInScreenState extends State<SignInScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.fromRegister) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.registrationSuccess)),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.registrationSuccess),
+          ),
         );
       }
     });
@@ -61,6 +64,7 @@ class _SignInScreenState extends State<SignInScreen> {
         email: email,
         password: password,
       );
+      await FcmTokenService.saveCurrentUserFcmToken();
 
       if (!mounted) return;
 
@@ -128,7 +132,10 @@ class _SignInScreenState extends State<SignInScreen> {
 
               Text(
                 l10n.welcomeBack,
-                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
 
               const SizedBox(height: 30),
@@ -198,7 +205,9 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     foregroundColor: Colors.white,
 
-                    disabledBackgroundColor: Colors.deepPurple.withValues(alpha: 0.6),
+                    disabledBackgroundColor: Colors.deepPurple.withValues(
+                      alpha: 0.6,
+                    ),
 
                     disabledForegroundColor: Colors.white,
 

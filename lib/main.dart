@@ -20,12 +20,64 @@ import 'theme/theme_controller.dart';
 import 'helper/locale_provider.dart';
 
 import 'l10n/app_localizations.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // ================= FIREBASE INIT =================
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  await FirebaseMessaging.instance.subscribeToTopic('flickreview_reviews');
+  final token = await FirebaseMessaging.instance.getToken();
+
+  debugPrint("FCM TOKEN:");
+  debugPrint(token);
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+    final title = message.data['title'] ?? 'FlickReview';
+    final body = message.data['body'] ?? '';
+    final profileImageUrl = message.data['profileImageUrl'] ?? '';
+
+    final avatarBitmap = await getAvatarBitmap(profileImageUrl);
+
+    await flutterLocalNotificationsPlugin.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title,
+      body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'flickreview_channel',
+          'FlickReview Notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+          largeIcon: avatarBitmap,
+        ),
+      ),
+    );
+  });
 
   runApp(
     MultiProvider(
@@ -38,6 +90,22 @@ Future<void> main() async {
       child: const MyApp(),
     ),
   );
+}
+
+Future<ByteArrayAndroidBitmap?> getAvatarBitmap(String imageUrl) async {
+  if (imageUrl.isEmpty) return null;
+
+  try {
+    final response = await http.get(Uri.parse(imageUrl));
+
+    if (response.statusCode == 200) {
+      return ByteArrayAndroidBitmap(response.bodyBytes);
+    }
+  } catch (e) {
+    debugPrint("AVATAR NOTIFICATION ERROR: $e");
+  }
+
+  return null;
 }
 
 class MyApp extends StatelessWidget {

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flickreview/l10n/app_localizations.dart';
 
 import 'location_picker_screen.dart';
+import 'package:flickreview/services/notification_service.dart';
 
 class PostReviewScreen extends StatefulWidget {
   final String movieId;
@@ -129,9 +130,9 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
     final reviewText = _reviewController.text.trim();
 
     if (rating == 0 || reviewText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.ratingAndReviewRequired)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.ratingAndReviewRequired)));
       return;
     }
 
@@ -183,11 +184,21 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
             'isEdited': false,
           });
 
+      await NotificationService.sendReviewNotification(
+        fullname: fullname,
+        username: username,
+        movieTitle: widget.movieTitle,
+        movieYear: widget.movieYear,
+        profileImageUrl: profileImageUrl,
+        movieId: widget.movieId,
+        reviewId: user.uid,
+      );
+
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.reviewSubmittedSuccessfully)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.reviewSubmittedSuccessfully)));
 
       Navigator.pop(context, true);
     } catch (e) {
@@ -336,7 +347,10 @@ class _PostReviewScreenState extends State<PostReviewScreen> {
             Center(
               child: Text(
                 l10n.giveYourRating,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
 

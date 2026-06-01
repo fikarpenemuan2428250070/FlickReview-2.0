@@ -151,32 +151,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   MovieSection(
-                    title: '🔥 ${AppLocalizations.of(context)!.trending}',
+                    title: ' ${AppLocalizations.of(context)!.trending}',
                     movies: trendingMovies,
                   ),
 
                   MovieSection(
-                    title: '⭐ ${AppLocalizations.of(context)!.popular}',
+                    title: ' ${AppLocalizations.of(context)!.popular}',
                     movies: popularMovies,
                   ),
 
                   MovieSection(
-                    title: '🏆 ${AppLocalizations.of(context)!.topRated}',
+                    title: ' ${AppLocalizations.of(context)!.topRated}',
                     movies: topRatedMovies,
                   ),
 
                   MovieSection(
-                    title: '🎬 ${AppLocalizations.of(context)!.upcoming}',
+                    title: ' ${AppLocalizations.of(context)!.upcoming}',
                     movies: upcomingMovies,
                   ),
 
                   MovieSection(
-                    title: '👻 ${AppLocalizations.of(context)!.horror}',
+                    title: ' ${AppLocalizations.of(context)!.horror}',
                     movies: horrorMovies,
                   ),
 
                   MovieSection(
-                    title: '😂 ${AppLocalizations.of(context)!.comedy}',
+                    title: ' ${AppLocalizations.of(context)!.comedy}',
                     movies: comedyMovies,
                   ),
 

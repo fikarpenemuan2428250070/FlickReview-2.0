@@ -13,6 +13,8 @@ import '../services/tmdb_service.dart';
 import 'gallery_preview_screen.dart';
 import 'post_review_screen.dart';
 import 'review_screen.dart';
+import 'movie_reviews_screen.dart';
+import 'edit_review_screen.dart';
 
 class DetailScreen extends StatefulWidget {
   final Movie movie;
@@ -153,6 +155,74 @@ class _DetailScreenState extends State<DetailScreen> {
   String shortReview(String text) {
     if (text.length <= 90) return text;
     return '${text.substring(0, 90)}...';
+  }
+
+  Future<void> openPostOrEditReview(Movie movie) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      Navigator.pushNamed(context, '/signin');
+      return;
+    }
+
+    final reviewDoc = await FirebaseFirestore.instance
+        .collection('movie_reviews')
+        .doc(movie.id)
+        .collection('reviews')
+        .doc(user.uid)
+        .get();
+
+    if (!reviewDoc.exists) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PostReviewScreen(
+            movieId: movie.id,
+            movieTitle: movie.title,
+            movieYear: movie.year,
+            movieGenre: movie.genre,
+            movieDirector: movie.director,
+            posterUrl: movie.posterUrl,
+          ),
+        ),
+      );
+
+      return;
+    }
+
+    final reviewData = reviewDoc.data() as Map<String, dynamic>;
+    reviewData['reviewId'] = reviewDoc.id;
+
+    if (!mounted) return;
+
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Review Already Exists'),
+        content: const Text(
+          'You have already reviewed this movie.\nWould you like to edit your review?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'cancel'),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, 'edit'),
+            child: const Text('Edit Review'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == 'edit') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => EditReviewScreen(reviewData: reviewData),
+        ),
+      );
+    }
   }
 
   @override
@@ -313,24 +383,22 @@ class _DetailScreenState extends State<DetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             ratingColumn(
-                              "⭐ ${l10n.imdb}",
+                              "IMDb",
                               externalRating == null
                                   ? "..."
-                                  : externalRating!.imdbRating.toStringAsFixed(
-                                      1,
-                                    ),
+                                  : "${externalRating!.imdbRating.toStringAsFixed(1)}/10",
                             ),
 
                             ratingColumn(
-                              "🍅 ${l10n.critics}",
+                              "Rotten Tomatoes",
                               externalRating == null
                                   ? "..."
                                   : "${externalRating!.rottenTomatoes}%",
                             ),
 
                             ratingColumn(
-                              "🎬 ${l10n.flickreviewRating}",
-                              flickRating.toStringAsFixed(1),
+                              "FlickReview",
+                              "${flickRating.toStringAsFixed(1)}/5",
                             ),
                           ],
                         ),
@@ -391,7 +459,11 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Text(movie.synopsis, style: const TextStyle(height: 1.6)),
+                      Text(
+                        movie.synopsis,
+                        textAlign: TextAlign.justify,
+                        style: const TextStyle(height: 1.6),
+                      ),
 
                       const SizedBox(height: 30),
 
@@ -451,24 +523,34 @@ class _DetailScreenState extends State<DetailScreen> {
                               fontSize: 18,
                             ),
                           ),
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => PostReviewScreen(
-                                    movieId: movie.id,
-                                    movieTitle: movie.title,
-                                    movieYear: movie.year,
-                                    movieGenre: movie.genre,
-                                    movieDirector: movie.director,
-                                    posterUrl: movie.posterUrl,
-                                  ),
+
+                          Row(
+                            children: [
+                              if (reviewDocs.length > 5)
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => MovieReviewsScreen(
+                                          movieId: movie.id,
+                                          movieTitle: movie.title,
+                                          movieYear: movie.year,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('See More'),
                                 ),
-                              );
-                            },
-                            icon: const Icon(Icons.add),
-                            label: Text(l10n.addReview),
+
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  openPostOrEditReview(movie);
+                                },
+                                icon: const Icon(Icons.add),
+                                label: const Text("Add Review"),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -481,7 +563,9 @@ class _DetailScreenState extends State<DetailScreen> {
                               height: 180,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: reviewDocs.length,
+                                itemCount: reviewDocs.length > 5
+                                    ? 5
+                                    : reviewDocs.length,
                                 itemBuilder: (context, index) {
                                   final data =
                                       reviewDocs[index].data()

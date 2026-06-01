@@ -13,9 +13,7 @@ class ItemCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          SlidePageRoute(
-            page: DetailScreen(movie: movie),
-          ),
+          SlidePageRoute(page: DetailScreen(movie: movie)),
         );
       },
       child: Card(
@@ -26,8 +24,9 @@ class ItemCard extends StatelessWidget {
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(15)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(15),
+                ),
                 child: Image.network(
                   movie.posterUrl,
                   fit: BoxFit.cover,
@@ -43,24 +42,40 @@ class ItemCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Text(
-                movie.title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
+            SizedBox(
+              height: 52,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      movie.title,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        height: 1.15,
+                      ),
+                    ),
+
+                    const SizedBox(height: 3),
+
+                    Text(
+                      movie.year.toString(),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white70
+                            : Colors.grey[600],
+                      ),
+                    ),
+                  ],
                 ),
-                maxLines: 2,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(
-                movie.year,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 11),
               ),
             ),
           ],

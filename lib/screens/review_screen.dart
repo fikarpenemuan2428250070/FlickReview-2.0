@@ -76,8 +76,7 @@ class ReviewScreen extends StatelessWidget {
               }
             },
             itemBuilder: (context) => [
-              if (isOwner)
-                PopupMenuItem(value: 'edit', child: Text(l10n.edit)),
+              if (isOwner) PopupMenuItem(value: 'edit', child: Text(l10n.edit)),
               if (isOwner)
                 PopupMenuItem(value: 'delete', child: Text(l10n.delete)),
               PopupMenuItem(value: 'info', child: Text(l10n.information)),
@@ -144,30 +143,63 @@ class ReviewScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // RATING
-            Row(
-              children: [
-                const Icon(Icons.star, color: Colors.orange, size: 30),
-                const SizedBox(width: 8),
-                Text(
-                  rating.toStringAsFixed(1),
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+            // RATING SECTION
+            Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 50,
+                  vertical: 8,
                 ),
-                Text('/5', style: const TextStyle(fontSize: 20)),
-              ],
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(context).dividerColor.withOpacity(0.5),
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Rating',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.star, color: Colors.orange, size: 34),
+                        const SizedBox(width: 8),
+                        Text(
+                          rating.toStringAsFixed(1),
+                          style: const TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Text('/5', style: TextStyle(fontSize: 20)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
 
             const SizedBox(height: 18),
 
             //IMAGES
+
+            // REVIEW TEXT
+            Text(
+              l10n.reviews,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 8),
+
             if (reviewImageUrls.isNotEmpty) ...[
-              Text(
-                l10n.images,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
               const SizedBox(height: 12),
 
               GridView.builder(
@@ -211,28 +243,26 @@ class ReviewScreen extends StatelessWidget {
                   );
                 },
               ),
-
-              const SizedBox(height: 6),
             ],
 
-            // REVIEW TEXT
             Text(
-              l10n.reviews,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              review,
+              textAlign: TextAlign.justify,
+              style: const TextStyle(fontSize: 15, height: 1.6),
             ),
 
-            const SizedBox(height: 8),
-
-            Text(review, style: const TextStyle(fontSize: 15, height: 1.6)),
-
-            const SizedBox(height: 24),
+            const SizedBox(height: 30),
           ],
         ),
       ),
     );
   }
 
-  String formatReviewDate(dynamic timestamp, bool isEdited, AppLocalizations l10n) {
+  String formatReviewDate(
+    dynamic timestamp,
+    bool isEdited,
+    AppLocalizations l10n,
+  ) {
     if (timestamp == null) return '';
 
     DateTime date;
@@ -271,51 +301,78 @@ class ReviewScreen extends StatelessWidget {
 
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.reviewInformation,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
-                const SizedBox(height: 16),
-
-                Text('${l10n.reviewer}: $fullname'),
-                const SizedBox(height: 8),
-
-                Text('Username: @$username'),
-                const SizedBox(height: 8),
-
-                if (locationName.toString().isNotEmpty)
-                  InkWell(
-                    onTap: openMaps,
-                    child: Row(
-                      children: [
-                        Text('${l10n.location}: '),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            locationName,
-                            style: const TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
+        return Container(
+          decoration: BoxDecoration(
+            color: isDark
+                ? const Color(0xFF1F1B2E)
+                : Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 5,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.white24 : Colors.black26,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                   ),
 
-                const SizedBox(height: 8),
+                  Text(
+                    l10n.reviewInformation,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
 
-                if (reviewDateText.isNotEmpty) Text('${l10n.date}: $reviewDateText'),
-              ],
+                  const SizedBox(height: 16),
+
+                  Text('${l10n.reviewer}: $fullname'),
+                  const SizedBox(height: 8),
+
+                  Text('Username: @$username'),
+                  const SizedBox(height: 8),
+
+                  if (locationName.toString().isNotEmpty)
+                    InkWell(
+                      onTap: openMaps,
+                      child: Row(
+                        children: [
+                          Text('${l10n.location}: '),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              locationName,
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  const SizedBox(height: 8),
+
+                  if (reviewDateText.isNotEmpty)
+                    Text('${l10n.date}: $reviewDateText'),
+                ],
+              ),
             ),
           ),
         );
